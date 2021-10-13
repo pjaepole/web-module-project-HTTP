@@ -7,7 +7,7 @@ import axios from 'axios';
 const EditMovieForm = (props) => {
 	const {id} =useParams()
 	const { push } = useHistory();
-
+	console.log('editmovieform props',props)
 	useEffect(()=>{
 		axios.get(`http://localhost:5000/api/movies/${id}`)
 		.then(resp=>{
@@ -16,7 +16,7 @@ const EditMovieForm = (props) => {
 		.catch(err=>{
 			console.log(err)
 		})
-	})
+	},[])
 	const [movie, setMovie] = useState({
 		title:"",
 		director: "",
@@ -34,7 +34,11 @@ const EditMovieForm = (props) => {
 
     const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log('clicked save edit button')
+		axios.put(`http://localhost:5000/api/movies/${id}`, movie)
+		.then(resp=>{
+						props.setMovies(resp.data);
+						push(`/movies/${id}`)})
+		.catch(err=>{console.log(err)})
 	}
 	
 	const { title, director, genre, metascore, description } = movie;
@@ -49,23 +53,23 @@ const EditMovieForm = (props) => {
 				<div className="modal-body">					
 					<div className="form-group">
 						<label>Title</label>
-						<input value={title} onChange={handleChange} name="title" type="text" className="form-control"/>
+						<input value={movie.title} onChange={handleChange} name="title" type="text" className="form-control"/>
 					</div>
 					<div className="form-group">
 						<label>Director</label>
-						<input value={director} onChange={handleChange} name="director" type="text" className="form-control"/>
+						<input value={movie.director} onChange={handleChange} name="director" type="text" className="form-control"/>
 					</div>
 					<div className="form-group">
 						<label>Genre</label>
-						<input value={genre} onChange={handleChange} name="genre" type="text" className="form-control"/>
+						<input value={movie.genre} onChange={handleChange} name="genre" type="text" className="form-control"/>
 					</div>
 					<div className="form-group">
 						<label>Metascore</label>
-						<input value={metascore} onChange={handleChange} name="metascore" type="number" className="form-control"/>
+						<input value={movie.metascore} onChange={handleChange} name="metascore" type="number" className="form-control"/>
 					</div>		
 					<div className="form-group">
 						<label>Description</label>
-						<textarea value={description} onChange={handleChange} name="description" className="form-control"></textarea>
+						<textarea value={movie.description} onChange={handleChange} name="description" className="form-control"></textarea>
 					</div>
 									
 				</div>
