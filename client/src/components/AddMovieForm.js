@@ -1,6 +1,10 @@
 import React, {useState} from 'react'
-import { Link } from 'react-router-dom'
-const AddMovieForm =()=>{
+import { Link,useHistory } from 'react-router-dom'
+import axios from 'axios'
+
+
+const AddMovieForm =(props)=>{
+    const {push}=useHistory()
     const initialAddMovieFormValues= {
         title: "",
         director: "",
@@ -12,6 +16,7 @@ const AddMovieForm =()=>{
       const [addMovieFormValues, setAddMovieFormValues]=useState(initialAddMovieFormValues)
 
       const handleChange=(e)=>{
+          console.log(props)
         setAddMovieFormValues({
             ...addMovieFormValues,
             [e.target.name]:e.target.value
@@ -20,7 +25,13 @@ const AddMovieForm =()=>{
 
       const addMovieFormSubmit=(e)=>{
           e.preventDefault()
-          console.log(addMovieFormValues)
+          localStorage.setItem('addMovieFormValues',JSON.stringify(addMovieFormValues))
+          axios.post('http://localhost:5000/api/movies',addMovieFormValues)
+          .then(resp=>{
+              props.setMovies(resp.data)
+              push('/movies');
+                })
+          .catch(err=>{console.log(err)})
       }
     return(
         <div>
